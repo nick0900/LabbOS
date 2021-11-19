@@ -8,6 +8,8 @@
 #include <pthread.h>
 #include <semaphore.h>
 #include <fcntl.h>
+#include <math.h>
+
 #define SHMSIZE 128
 #define SHM_R 0400
 #define SHM_W 0200
@@ -18,18 +20,22 @@ const char *semName1 = "sema1";
 const char *semName2 = "sema2";
 const char *semName3 = "sema3";
 
-void RandomTime(struct timespec *req)
+void RandomTime()
 {
+    struct timespec req;
+
     float random = ((float) rand()) / (float) RAND_MAX;
 
     float randTime = 0.1 + 1.9 * random;
-    req->tv_sec = 0;
-    if (randTime > 1)
-    {
-        req->tv_sec = 1;
-        randTime -= 1;
-    }
-    req->tv_nsec == 999999999 * randTime;
+    req.tv_sec = (float)floor(randTime);
+
+    randTime -= (float)floor(randTime);;
+
+    req.tv_nsec = 999999999 * randTime;
+
+    struct timespec rem;
+
+    nanosleep(&req, &rem);
 }
 
 int main(int argc, char **argv)
@@ -56,8 +62,6 @@ int main(int argc, char **argv)
 
     //both parent and child has an index for their current position in buffer and has req and rem to randomize and wait a certian time.
     int index = 0;
-    struct timespec req;
-    struct timespec rem;
 
     if(pid != 0) 
     {
@@ -86,8 +90,7 @@ int main(int argc, char **argv)
             {
                 index = 0;
             }
-            RandomTime(&req);
-            nanosleep(&req, &rem);
+            RandomTime();
         }
         shmdt(addr);
         shmctl(shmid, IPC_RMID, shm_buf);
@@ -117,8 +120,7 @@ int main(int argc, char **argv)
             {
                 index = 0;
             }
-            RandomTime(&req);
-            nanosleep(&req, &rem);
+            RandomTime();
         }
         shmdt(addr);
         shmctl(shmid, IPC_RMID, shm_buf);
