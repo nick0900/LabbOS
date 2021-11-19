@@ -45,17 +45,24 @@ int main(void)
     
     while (getchar() != 'q') 
     {
+        printf("Sent: ");
         for (int i = 0; i < INTS; i++)
         {
             float randfrac = (float)rand() / (float)RAND_MAX;
             buf.mtext[i] = (int)(INT_MIN + (INT_MAX - INT_MIN) * randfrac);
+            printf("%i ", buf.mtext[i]);
         }
         
         if(msgsnd(msqid, &buf, len, 0) == -1)
         perror("msgsnd");
     }
+
+    for (int i = 0; i < INTS; i++)
+        {
+            buf.mtext[i] = 0;
+        }
     
-    buf.mtype = 0;
+    buf.mtype = 2;
     
     if(msgsnd(msqid, &buf, len, 0) == -1)
     perror("msgsnd");

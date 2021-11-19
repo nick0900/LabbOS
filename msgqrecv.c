@@ -38,13 +38,13 @@ int main(void) {
          exit(1);
       }
 
-      if (buf.mtype == 0)
+      if (buf.mtype == 2)
       break;
 
       printf("recvd: ");
       for (int i = 0; i < INTS; i++)
       {
-         printf("%i, ", buf.mtext[i]);
+         printf("%i ", buf.mtext[i]);
       }
       printf("\n");
    }
