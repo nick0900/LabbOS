@@ -14,14 +14,14 @@
 struct my_msgbuf 
 {
     long mtype;
-    int mtext[INTS];
+    int mtext;
 };
 
 int main(void) 
 {
     struct my_msgbuf buf;
     int msqid;
-    int len = sizeof(int) * INTS;
+    int len = sizeof(int);
     key_t key;
     system("touch msgq.txt");
     
@@ -45,22 +45,16 @@ int main(void)
     
     while (getchar() != 'q') 
     {
-        printf("Sent: ");
         for (int i = 0; i < INTS; i++)
         {
             float randfrac = (float)rand() / (float)RAND_MAX;
-            buf.mtext[i] = (int)(INT_MIN + (INT_MAX - INT_MIN) * randfrac);
-            printf("%i ", buf.mtext[i]);
+            buf.mtext = (int)(INT_MIN + (INT_MAX - INT_MIN) * randfrac);
+            printf("Sent: %i ", buf.mtext);
+            
+            if(msgsnd(msqid, &buf, len, 0) == -1)
+            perror("msgsnd");
         }
-        
-        if(msgsnd(msqid, &buf, len, 0) == -1)
-        perror("msgsnd");
     }
-
-    for (int i = 0; i < INTS; i++)
-        {
-            buf.mtext[i] = 0;
-        }
     
     buf.mtype = 2;
     

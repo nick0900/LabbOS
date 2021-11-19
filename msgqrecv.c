@@ -11,7 +11,7 @@
 
 struct my_msgbuf {
    long mtype;
-   int mtext[INTS];
+   int mtext;
 };
 
 int main(void) {
@@ -33,7 +33,7 @@ int main(void) {
 
    for(;;) { /* normally receiving never ends but just to make conclusion */
              /* this program ends with mtype == 0 */
-      if (msgrcv(msqid, &buf, sizeof(int) * INTS, 0, 0) == -1) {
+      if (msgrcv(msqid, &buf, sizeof(int), 0, 0) == -1) {
          perror("msgrcv");
          exit(1);
       }
@@ -42,10 +42,7 @@ int main(void) {
       break;
 
       printf("recvd: ");
-      for (int i = 0; i < INTS; i++)
-      {
-         printf("%i ", buf.mtext[i]);
-      }
+      printf("%i ", buf.mtext);
       printf("\n");
    }
    printf("message queue: done receiving messages.\n");
